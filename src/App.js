@@ -1,24 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import MainPanel from "./components/MainPanel";
+import CreateCard from "./components/CreateCard";
+import MyCard from "./components/MyCard"; // Assuming you will implement this
+import ProfileSettings from "./components/ProfileSettings"; // Assuming you will implement this
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainPanel />} />
+        <Route path="/create-card" element={<CreateCard />} />
+        <Route path="/my-card" element={<MyCard />} />
+        <Route path="/profile-settings" element={<ProfileSettings />} />
+      </Routes>
+    </Router>
   );
 }
 
