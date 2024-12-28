@@ -6,6 +6,7 @@ import whatsappIcon from "../assets/whatsapp.png";
 import linkedinIcon from "../assets/linkedin.png";
 import facebookIcon from "../assets/facebook.png";
 import instagramIcon from "../assets/instagram.png";
+import { error } from "ajv/dist/vocabularies/applicator/dependencies";
 
 const MyCard = () => {
   const location = useLocation();
@@ -35,7 +36,32 @@ const MyCard = () => {
 
   // Function to handle saving contact
   const handleSave = () => {
-    alert("Contact Saved!");
+    // alert("Contact Saved!");
+    const contactInfo = `
+    Name: ${fullName}
+    Designation: ${designation}
+    Phone: ${phone}
+    Email: ${email}
+    Website: ${website}
+    Address: ${address} 
+    `;
+
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "Save Contact",
+          text: contactInfo,
+        })
+        .then(() => {
+          alert("Contact Shared");
+        })
+        .catch((error) => {
+          alert("Error Sharing contact:" + error);
+        });
+    } else {
+      alert("Sharing is not supported on this browser.");
+    }
+
     // Implement actual save logic here (e.g., save to local storage, database, etc.)
   };
 
