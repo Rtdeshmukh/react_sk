@@ -34,8 +34,8 @@ const MyCard = () => {
   const profilePicURL = profilePic ? URL.createObjectURL(profilePic) : null;
 
   // Function to handle saving contact
-  const handleSave = () => {
-    alert("Contact Saved!");
+  // const handleSave = () => {
+  //   alert("Contact Saved!");
     // Implement actual save logic here (e.g., save to local storage, database, etc.)
   };
 
