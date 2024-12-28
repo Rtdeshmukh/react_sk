@@ -33,15 +33,18 @@ const MyCard = () => {
   const logoURL = logo ? URL.createObjectURL(logo) : null;
   const profilePicURL = profilePic ? URL.createObjectURL(profilePic) : null;
 
-  const MyCard = () => {
-    const handleSave = () => {
-      alert("Saved!");
-    };
-
-    const handleShare = () => {
-      alert("Shared");
-    };
+  // Function to handle saving contact
+  const handleSave = () => {
+    alert("Contact Saved!");
+    // Implement actual save logic here (e.g., save to local storage, database, etc.)
   };
+
+  // Function to handle sharing contact
+  const handleShare = () => {
+    alert("Contact Shared!");
+    // Implement actual share logic here (e.g., sharing via WhatsApp, email, etc.)
+  };
+
   return (
     <div className="my-card">
       <Navbar />
@@ -117,18 +120,31 @@ const MyCard = () => {
 
           {/* Social Icons */}
           <div className="social-icons">
-            <img src={whatsappIcon} alt="WhatsApp" className="social-icon" />
-            <img src={linkedinIcon} alt="LinkedIn" className="social-icon" />
-            <img src={facebookIcon} alt="Facebook" className="social-icon" />
-            <img src={instagramIcon} alt="Instagram" className="social-icon" />
+            <a
+              href={`https://wa.me/${phone}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src={whatsappIcon} alt="WhatsApp" className="social-icon" />
+            </a>
+            <a href={linkedin} target="_blank" rel="noopener noreferrer">
+              <img src={linkedinIcon} alt="LinkedIn" className="social-icon" />
+            </a>
+            <a href={facebook} target="_blank" rel="noopener noreferrer">
+              <img src={facebookIcon} alt="Facebook" className="social-icon" />
+            </a>
+            <a href={instagram} target="_blank" rel="noopener noreferrer">
+              <img
+                src={instagramIcon}
+                alt="Instagram"
+                className="social-icon"
+              />
+            </a>
           </div>
 
           <div className="save-share-icons">
             {/* Save icon */}
-            <button
-              className="save-share-button"
-              onClick={() => alert("Saved!")}
-            >
+            <button className="save-share-button" onClick={handleSave}>
               <i className="fas fa-save save-share-icon" title="Save">
                 {" "}
               </i>
@@ -136,10 +152,7 @@ const MyCard = () => {
             </button>
 
             {/* Share icon */}
-            <button
-              className="save-share-button"
-              onClick={() => alert("Shared!")}
-            >
+            <button className="save-share-button" onClick={handleShare}>
               <i className="fas fa-share-alt save-share-icon" title="Share"></i>
               <span>Share Contact</span>
             </button>
