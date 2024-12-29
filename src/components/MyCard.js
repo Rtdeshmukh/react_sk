@@ -6,7 +6,7 @@ import whatsappIcon from "../assets/whatsapp.png";
 import linkedinIcon from "../assets/linkedin.png";
 import facebookIcon from "../assets/facebook.png";
 import instagramIcon from "../assets/instagram.png";
-import { error } from "ajv/dist/vocabularies/applicator/dependencies";
+// import { error } from "ajv/dist/vocabularies/applicator/dependencies";
 
 const MyCard = () => {
   const location = useLocation();
@@ -34,35 +34,35 @@ const MyCard = () => {
   const logoURL = logo ? URL.createObjectURL(logo) : null;
   const profilePicURL = profilePic ? URL.createObjectURL(profilePic) : null;
 
-  // Function to handle saving contact
+  // Function to generate the vCard (VCF) format
+  const generateVCF = () => {
+    const vCardData = `
+BEGIN:VCARD
+VERSION:3.0
+FN:${fullName}
+TEL:${phone}
+EMAIL:${email}
+URL:${website}
+ADR:${address}
+PHOTO;ENCODING=BASE64;TYPE=JPEG:${profilePicURL}  // You may need to base64 encode the image if necessary
+END:VCARD
+  `;
+    return vCardData;
+  };
+
+  // Function to download the VCF file
+  const downloadVCF = (vCardData) => {
+    const blob = new Blob([vCardData], { type: "text/vcard" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${fullName}_contact.vcf`; // Use the user's name to name the VCF file
+    link.click();
+  };
+
+  // Function to handle saving contact as VCF
   const handleSave = () => {
-    // alert("Contact Saved!");
-    const contactInfo = `
-    Name: ${fullName}
-    Designation: ${designation}
-    Phone: ${phone}
-    Email: ${email}
-    Website: ${website}
-    Address: ${address} 
-    `;
-
-    if (navigator.share) {
-      navigator
-        .share({
-          title: "Save Contact",
-          text: contactInfo,
-        })
-        .then(() => {
-          alert("Contact Shared");
-        })
-        .catch((error) => {
-          alert("Error Sharing contact:" + error);
-        });
-    } else {
-      alert("Sharing is not supported on this browser.");
-    }
-
-    // Implement actual save logic here (e.g., save to local storage, database, etc.)
+    const vCardData = generateVCF(); // Generate the VCF data
+    downloadVCF(vCardData); // Trigger download of the VCF file
   };
 
   // Function to handle sharing contact
