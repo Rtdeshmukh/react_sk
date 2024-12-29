@@ -53,6 +53,7 @@ END:VCARD
   // Function to download the VCF file
   const downloadVCF = (vCardData) => {
     const blob = new Blob([vCardData], { type: "text/vcard" });
+    console.log("Blob created:", blob);
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = `${fullName}_contact.vcf`; // Use the user's name to name the VCF file
@@ -62,12 +63,13 @@ END:VCARD
   // Function to handle saving contact as VCF
   const handleSave = () => {
     const vCardData = generateVCF(); // Generate the VCF data
+    console.log("VCF Data Generated:", vCardData);
     downloadVCF(vCardData); // Trigger download of the VCF file
   };
 
   // Function to handle sharing contact
   const handleShare = () => {
-    alert("Contact Shared!");
+    // alert("Contact Shared!");
     // Implement actual share logic here (e.g., sharing via WhatsApp, email, etc.)
   };
 
