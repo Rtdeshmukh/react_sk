@@ -6,6 +6,7 @@ import whatsappIcon from "../assets/whatsapp.png";
 import linkedinIcon from "../assets/linkedin.png";
 import facebookIcon from "../assets/facebook.png";
 import instagramIcon from "../assets/instagram.png";
+import { error } from "ajv/dist/vocabularies/applicator/dependencies";
 // import { error } from "ajv/dist/vocabularies/applicator/dependencies";
 
 const MyCard = () => {
@@ -62,9 +63,18 @@ END:VCARD
 
   // Function to handle saving contact as VCF
   const handleSave = () => {
-    const vCardData = generateVCF(); // Generate the VCF data
-    console.log("VCF Data Generated:", vCardData);
-    downloadVCF(vCardData); // Trigger download of the VCF file
+    try {
+      const vCardData = generateVCF(); // Generate the VCF data
+      // console.log("VCF Data Generated:", vCardData);
+      if (!vCardData) {
+        console.error("Failed to generate VCF Data.");
+        return;
+      }
+
+      downloadVCF(vCardData); // Trigger download of the VCF file
+    } catch (error) {
+      console.log("Error is Save Contact", error);
+    }
   };
 
   // Function to handle sharing contact
