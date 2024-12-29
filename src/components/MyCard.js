@@ -6,12 +6,10 @@ import whatsappIcon from "../assets/whatsapp.png";
 import linkedinIcon from "../assets/linkedin.png";
 import facebookIcon from "../assets/facebook.png";
 import instagramIcon from "../assets/instagram.png";
-import { error } from "ajv/dist/vocabularies/applicator/dependencies";
-// import { error } from "ajv/dist/vocabularies/applicator/dependencies";
 
 const MyCard = () => {
   const location = useLocation();
-  const { state } = location; // Retrieve the passed data
+  const { state } = location;
 
   if (!state) {
     return <p>No card data available!</p>;
@@ -31,56 +29,69 @@ const MyCard = () => {
     address,
   } = state;
 
-  // If logos or images exist, create object URLs
   const logoURL = logo ? URL.createObjectURL(logo) : null;
   const profilePicURL = profilePic ? URL.createObjectURL(profilePic) : null;
 
   // Function to generate the vCard (VCF) format
-  const generateVCF = () => {
-    const vCardData = `
+  const generateVCF = async () => {
+    const getBase64Image = (file) =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+    let base64Image = "";
+    if (profilePic) {
+      try {
+        base64Image = await getBase64Image(profilePic);
+      } catch (err) {
+        console.error("Error converting image to Base64:", err);
+      }
+    }
+
+    const formattedAddress = address ? `;;${address.replace(/,/g, ";")}` : "";
+
+    return `
 BEGIN:VCARD
 VERSION:3.0
-FN:${fullName}
-TEL:${phone}
-EMAIL:${email}
-URL:${website}
-ADR:${address}
-PHOTO;ENCODING=BASE64;TYPE=JPEG:${profilePicURL}  // You may need to base64 encode the image if necessary
+FN:${fullName || ""}
+TEL:${phone || ""}
+EMAIL:${email || ""}
+URL:${website || ""}
+ADR:${formattedAddress}
+${base64Image ? `PHOTO;ENCODING=BASE64;TYPE=JPEG:${base64Image}` : ""}
 END:VCARD
-  `;
-    return vCardData;
+    `.trim();
   };
 
   // Function to download the VCF file
   const downloadVCF = (vCardData) => {
-    const blob = new Blob([vCardData], { type: "text/vcard" });
-    console.log("Blob created:", blob);
+    const blob = new Blob([vCardData], { type: "text/vcard; charset=utf-8" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `${fullName}_contact.vcf`; // Use the user's name to name the VCF file
+    link.download = `${fullName}_contact.vcf`;
     link.click();
   };
 
   // Function to handle saving contact as VCF
-  const handleSave = () => {
+  const handleSave = async () => {
     try {
-      const vCardData = generateVCF(); // Generate the VCF data
-      // console.log("VCF Data Generated:", vCardData);
+      const vCardData = await generateVCF();
       if (!vCardData) {
         console.error("Failed to generate VCF Data.");
         return;
       }
-
-      downloadVCF(vCardData); // Trigger download of the VCF file
-    } catch (error) {
-      console.log("Error is Save Contact", error);
+      downloadVCF(vCardData);
+    } catch (err) {
+      console.error("Error in Save Contact:", err);
     }
   };
 
   // Function to handle sharing contact
   const handleShare = () => {
-    // alert("Contact Shared!");
-    // Implement actual share logic here (e.g., sharing via WhatsApp, email, etc.)
+    alert("Share functionality is under development.");
   };
 
   return (
@@ -104,7 +115,6 @@ END:VCARD
           <h3 className="full-name">{fullName}</h3>
           <p className="designation">{designation}</p>
 
-          {/* Phone */}
           {phone && (
             <div className="info-item phone">
               <i className="fas fa-phone-alt"></i>
@@ -114,7 +124,6 @@ END:VCARD
             </div>
           )}
 
-          {/* Email */}
           {email && (
             <div className="info-item email">
               <i className="fas fa-envelope"></i>
@@ -124,7 +133,6 @@ END:VCARD
             </div>
           )}
 
-          {/* Website */}
           {website && (
             <div className="info-item website">
               <i className="fas fa-globe"></i>
@@ -139,7 +147,6 @@ END:VCARD
             </div>
           )}
 
-          {/* Address */}
           {address && (
             <div className="info-item address">
               <i className="fas fa-map-marker-alt"></i>
@@ -156,42 +163,64 @@ END:VCARD
             </div>
           )}
 
-          {/* Social Icons */}
           <div className="social-icons">
-            <a
-              href={`https://wa.me/${phone}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={whatsappIcon} alt="WhatsApp" className="social-icon" />
-            </a>
-            <a href={linkedin} target="_blank" rel="noopener noreferrer">
-              <img src={linkedinIcon} alt="LinkedIn" className="social-icon" />
-            </a>
-            <a href={facebook} target="_blank" rel="noopener noreferrer">
-              <img src={facebookIcon} alt="Facebook" className="social-icon" />
-            </a>
-            <a href={instagram} target="_blank" rel="noopener noreferrer">
-              <img
-                src={instagramIcon}
-                alt="Instagram"
-                className="social-icon"
-              />
-            </a>
+            {phone && (
+              <a
+                href={`https://wa.me/${phone}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src={whatsappIcon}
+                  alt="WhatsApp"
+                  className="social-icon"
+                />
+              </a>
+            )}
+            {linkedin && (
+              <a href={linkedin} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={linkedinIcon}
+                  alt="LinkedIn"
+                  className="social-icon"
+                />
+              </a>
+            )}
+            {facebook && (
+              <a href={facebook} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={facebookIcon}
+                  alt="Facebook"
+                  className="social-icon"
+                />
+              </a>
+            )}
+            {instagram && (
+              <a href={instagram} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={instagramIcon}
+                  alt="Instagram"
+                  className="social-icon"
+                />
+              </a>
+            )}
           </div>
 
           <div className="save-share-icons">
-            {/* Save icon */}
-            <button className="save-share-button" onClick={handleSave}>
-              <i className="fas fa-save save-share-icon" title="Save">
-                {" "}
-              </i>
+            <button
+              className="save-share-button"
+              onClick={handleSave}
+              aria-label="Save Contact"
+            >
+              <i className="fas fa-save save-share-icon"></i>
               <span>Save Contact</span>
             </button>
-
-            {/* Share icon */}
-            <button className="save-share-button" onClick={handleShare}>
-              <i className="fas fa-share-alt save-share-icon" title="Share"></i>
+            <button
+              className="save-share-button"
+              onClick={handleShare}
+              aria-label="Share Contact"
+            >
+              <i className="fas fa-share-alt save-share-icon"></i>
               <span>Share Contact</span>
             </button>
           </div>
